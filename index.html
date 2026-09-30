@@ -1,25 +1,97 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fugfxSCgFApdOefHd2Ui/OMFnhZs6JPPj5/jdCE1FMA=' https://unpkg.com/@supabase/supabase-js@2.117.2/dist/umd/supabase.js; style-src 'sha256-7eo3WxfF8t0Yxe2UOgYUde2K2d+zUP0gXCRurBvWt9k='; connect-src https://lebqqcnvinfxwaeztixh.supabase.co; form-action 'self'; base-uri 'none'; object-src 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GP9 AI · Xác thực</title><style>body{font:16px system-ui,sans-serif;background:#f7f8fa;color:#17212b;margin:0}main{max-width:560px;background:white;margin:8vh auto;padding:28px;border:1px solid #d9e1e8;border-radius:12px}h1{font-size:1.5rem}label{display:block;margin:18px 0 6px}input{width:100%;box-sizing:border-box;padding:12px;font:inherit}button{padding:11px 16px;margin:16px 10px 0 0;font:inherit;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.muted{color:#5b6775}#error{color:#a02222}#client{white-space:pre-wrap}</style></head><body><main><h1>GP9 AI · Xác thực</h1><p class="muted">Chỉ sử dụng tài khoản được GP9 AI cấp quyền. Việc đăng nhập không tự cấp quyền Cập nhật GP9 AI.</p><p id="status">Đang kiểm tra phiên đăng nhập…</p><p id="error" role="alert"></p><section id="login" hidden><form id="form"><label for="email">Email tài khoản GP9 AI</label><input id="email" type="email" autocomplete="email" required><button type="submit">Gửi liên kết đăng nhập</button></form><p class="muted">Liên kết gửi qua Supabase Auth; chỉ tài khoản đã tồn tại mới đăng nhập được.</p></section><section id="consent" hidden><h2>Chấp thuận truy cập</h2><p id="client"></p><p id="scopes"></p><button id="approve" type="button">Chấp thuận</button><button id="deny" type="button">Từ chối</button></section><details><summary>Chẩn đoán phiên (an toàn)</summary><pre id="auth-diagnostics" aria-live="polite"></pre></details></main><script src="https://unpkg.com/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script><script>
-(async()=>{const $=id=>document.getElementById(id);const root=location.origin+"/gp9-ai-auth/";const project="https://lebqqcnvinfxwaeztixh.supabase.co";const anon="sb_publishable_TG43S9lk6H7cisWo-jWTXQ_ZHSj0-HX";const status=$("status"),error=$("error"),login=$("login"),consent=$("consent");const fail=e=>{error.textContent=e?.message||"Không thể hoàn tất xác thực.";status.textContent="Đã dừng; vui lòng thử lại khi hệ thống sẵn sàng."};if(!window.supabase?.createClient){fail(new Error("Không tải được ứng dụng xác thực."));return;}const current=new URL(location.href);
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-32bkbdrLqzOxnKqf4fsX6urClIoyGPWYsgmZRYiOohw=' https://unpkg.com/@supabase/supabase-js@2.117.2/dist/umd/supabase.js; style-src 'sha256-7eo3WxfF8t0Yxe2UOgYUde2K2d+zUP0gXCRurBvWt9k='; connect-src https://lebqqcnvinfxwaeztixh.supabase.co; form-action 'self'; base-uri 'none'; object-src 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GP9 AI · Xác thực</title><style>body{font:16px system-ui,sans-serif;background:#f7f8fa;color:#17212b;margin:0}main{max-width:560px;background:white;margin:8vh auto;padding:28px;border:1px solid #d9e1e8;border-radius:12px}h1{font-size:1.5rem}label{display:block;margin:18px 0 6px}input{width:100%;box-sizing:border-box;padding:12px;font:inherit}button{padding:11px 16px;margin:16px 10px 0 0;font:inherit;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.muted{color:#5b6775}#error{color:#a02222}#client{white-space:pre-wrap}</style></head><body><main><h1>GP9 AI · Xác thực</h1><p class="muted">Chỉ sử dụng tài khoản được GP9 AI cấp quyền. Việc đăng nhập không tự cấp quyền Cập nhật GP9 AI.</p><p id="status">Đang kiểm tra phiên đăng nhập…</p><p id="error" role="alert"></p><section id="login" hidden><form id="form"><label for="email">Email tài khoản GP9 AI</label><input id="email" type="email" autocomplete="email" required><button type="submit">Gửi liên kết đăng nhập</button></form><p class="muted">Liên kết gửi qua Supabase Auth; chỉ tài khoản đã tồn tại mới đăng nhập được.</p></section><section id="consent" hidden><h2>Chấp thuận truy cập</h2><p id="client"></p><p id="scopes"></p><button id="approve" type="button">Chấp thuận</button><button id="deny" type="button">Từ chối</button></section><details><summary>Chẩn đoán phiên (an toàn)</summary><pre id="auth-diagnostics" aria-live="polite"></pre></details></main><script src="https://unpkg.com/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script><script>
+(async()=>{
+const $=id=>document.getElementById(id);
+const root=location.origin+"/gp9-ai-auth/";
+const project="https://lebqqcnvinfxwaeztixh.supabase.co";
+const anon="sb_publishable_TG43S9lk6H7cisWo-jWTXQ_ZHSj0-HX";
 const storageKey="sb-lebqqcnvinfxwaeztixh-auth-token";
+const status=$("status"),error=$("error"),login=$("login"),consent=$("consent");
+const current=new URL(location.href);
 const callbackParams=new URLSearchParams(current.hash.slice(1));
-const callbackDetected=["access_token","refresh_token","error","error_description"].some(k=>callbackParams.has(k))||current.searchParams.has("code");
-const diag={build:"GP9_AUTH_DIAG_4",initialization:"INITIALIZE_PENDING",callback:callbackDetected?"CALLBACK_DETECTED":"CALLBACK_NOT_DETECTED",session:"SESSION_PENDING",user:"USER_PENDING",storage:"STORAGE_UNKNOWN",storageAtStart:"STORAGE_UNKNOWN",events:[],eventSession:"SESSION_UNKNOWN",origin:location.origin==="https://dzungmaithe-source.github.io"?"SAME_ORIGIN":"ORIGIN_MISMATCH"};
-const safeError=e=>{const codes=new Set(["session_not_found","refresh_token_not_found","refresh_token_already_used","bad_jwt","jwt_expired","user_not_found","user_banned","otp_expired","flow_state_not_found","flow_state_expired","invalid_credentials","over_request_rate_limit","over_email_send_rate_limit"]);if(codes.has(e?.code))return e.code;const categories={AuthSessionMissingError:"SESSION_MISSING",AuthRetryableFetchError:"NETWORK_RETRYABLE",AuthPKCEGrantCodeExchangeError:"PKCE_EXCHANGE_ERROR",AuthImplicitGrantRedirectError:"IMPLICIT_CALLBACK_ERROR",AuthInvalidTokenResponseError:"INVALID_TOKEN_RESPONSE",AuthApiError:"AUTH_API_ERROR",AuthUnknownError:"AUTH_UNKNOWN_ERROR",SecurityError:"STORAGE_ACCESS_ERROR",QuotaExceededError:"STORAGE_QUOTA_ERROR"};return categories[e?.name]||"AUTH_ERROR";};
+const callbackDetected=["access_token","refresh_token","error","error_code","error_description"].some(k=>callbackParams.has(k)||current.searchParams.has(k))||current.searchParams.has("code");
+const codes=new Set(["session_not_found","refresh_token_not_found","refresh_token_already_used","bad_jwt","jwt_expired","user_not_found","user_banned","otp_expired","flow_state_not_found","flow_state_expired","invalid_credentials","over_request_rate_limit","over_email_send_rate_limit","access_denied","invalid_request","server_error"]);
+const safeError=e=>{for(const code of [e?.code,e?.details?.code,e?.details?.error])if(codes.has(code))return code;const categories={AuthSessionMissingError:"SESSION_MISSING",AuthRetryableFetchError:"NETWORK_RETRYABLE",AuthPKCEGrantCodeExchangeError:"PKCE_EXCHANGE_ERROR",AuthPKCECodeVerifierMissingError:"PKCE_VERIFIER_MISSING",AuthImplicitGrantRedirectError:"IMPLICIT_CALLBACK_ERROR",AuthInvalidTokenResponseError:"INVALID_TOKEN_RESPONSE",AuthApiError:"AUTH_API_ERROR",AuthUnknownError:"AUTH_UNKNOWN_ERROR",SecurityError:"STORAGE_ACCESS_ERROR",QuotaExceededError:"STORAGE_QUOTA_ERROR"};return Object.prototype.hasOwnProperty.call(categories,e?.name)?categories[e.name]:"AUTH_ERROR";};
 const storagePresence=()=>{try{return localStorage.getItem(storageKey)!==null?"STORAGE_PRESENT":"STORAGE_ABSENT";}catch{return "STORAGE_ERROR";}};
-const renderDiag=()=>{diag.storage=storagePresence();$("auth-diagnostics").textContent=[diag.build,diag.initialization,diag.callback,diag.session,diag.user,"STORAGE_AT_START:"+diag.storageAtStart,diag.storage,...diag.events.map(e=>"AUTH_EVENT:"+e),"AUTH_EVENT_SESSION:"+diag.eventSession,diag.origin].join("\n");};
-diag.storageAtStart=storagePresence();renderDiag();
-const client=window.supabase.createClient(project,anon,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,skipAutoInitialize:true}});
-client.auth.onAuthStateChange((event,session)=>{const allowed=new Set(["INITIAL_SESSION","SIGNED_IN","SIGNED_OUT","PASSWORD_RECOVERY","TOKEN_REFRESHED","USER_UPDATED","MFA_CHALLENGE_VERIFIED"]);if(allowed.has(event)&&!diag.events.includes(event))diag.events.push(event);diag.eventSession=session?"SESSION_PRESENT":"SESSION_ABSENT";renderDiag();});
-let initialization;try{initialization=await client.auth.initialize();}catch(e){diag.initialization="INITIALIZE_ERROR:"+safeError(e);renderDiag();status.textContent="Không thể khởi tạo phiên đăng nhập.";error.textContent=diag.initialization;return;}
-diag.initialization=initialization.error?"INITIALIZE_ERROR:"+safeError(initialization.error):"INITIALIZE_OK";renderDiag();if(initialization.error){status.textContent="Không thể khởi tạo phiên đăng nhập.";error.textContent=diag.initialization;return;}
-let sessionResponse;try{sessionResponse=await client.auth.getSession();}catch(e){diag.session="SESSION_ERROR:"+safeError(e);renderDiag();status.textContent="Không thể khôi phục phiên đăng nhập.";error.textContent=diag.session;return;}
-diag.session=sessionResponse.error?"SESSION_ERROR:"+safeError(sessionResponse.error):sessionResponse.data.session?"SESSION_PRESENT":"SESSION_ABSENT";renderDiag();if(sessionResponse.error){status.textContent="Không thể khôi phục phiên đăng nhập.";error.textContent=diag.session;return;}
-let userResponse;try{userResponse=await client.auth.getUser();}catch(e){diag.user="USER_ERROR:"+safeError(e);renderDiag();status.textContent="Không thể xác minh người dùng.";error.textContent=diag.user;return;}
+const diag={build:"GP9_AUTH_CALLBACK_5",initialization:"INITIALIZE_PENDING",callback:callbackDetected?"CALLBACK_DETECTED":"CALLBACK_NOT_DETECTED",session:"SESSION_PENDING",user:"USER_PENDING",storageAtStart:storagePresence(),events:[],eventSession:"SESSION_UNKNOWN",origin:location.origin==="https://dzungmaithe-source.github.io"?"SAME_ORIGIN":"ORIGIN_MISMATCH"};
+const renderDiag=()=>{$("auth-diagnostics").textContent=[diag.build,diag.initialization,diag.callback,diag.session,diag.user,"STORAGE_AT_START:"+diag.storageAtStart,storagePresence(),...diag.events.map(e=>"AUTH_EVENT:"+e),"AUTH_EVENT_SESSION:"+diag.eventSession,diag.origin].join("\n");};
+const fail=(category,e)=>{error.textContent=category+(e?":"+safeError(e):"");status.textContent="Đã dừng; vui lòng thử lại khi hệ thống sẵn sàng.";login.hidden=consent.hidden=true;renderDiag();};
+renderDiag();
+if(diag.origin!=="SAME_ORIGIN"){fail("ORIGIN_MISMATCH");return;}
+if(!window.supabase?.createClient){fail("SDK_UNAVAILABLE");return;}
+let authorizationId=current.searchParams.get("authorization_id");
+const validId=id=>typeof id==="string"&&/^[a-zA-Z0-9_-]{8,160}$/.test(id);
+if(authorizationId&&!validId(authorizationId)){fail("AUTHORIZATION_ID_INVALID");return;}
+const storage={getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value),removeItem:key=>localStorage.removeItem(key)};
+let client;
+try{client=window.supabase.createClient(project,anon,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"implicit",storageKey,storage,skipAutoInitialize:true}});}catch(e){diag.initialization="INITIALIZE_ERROR:"+safeError(e);fail("INITIALIZE_ERROR",e);return;}
+let authReady=false,busy=false,rerun=false,navigating=false;
+const initPromise=client.auth.initialize();
+client.auth.onAuthStateChange((event,session)=>{
+const allowed=new Set(["INITIAL_SESSION","SIGNED_IN","SIGNED_OUT","PASSWORD_RECOVERY","TOKEN_REFRESHED","USER_UPDATED","MFA_CHALLENGE_VERIFIED"]);
+if(allowed.has(event)&&!diag.events.includes(event))diag.events.push(event);
+diag.eventSession=session?"SESSION_PRESENT":"SESSION_ABSENT";renderDiag();
+if(authReady&&!navigating)queueMicrotask(()=>{void reconcile();});
+});
+let initialized;
+try{initialized=await initPromise;}catch(e){diag.initialization="INITIALIZE_ERROR:"+safeError(e);fail("INITIALIZE_ERROR",e);return;}
+diag.initialization=initialized.error?"INITIALIZE_ERROR:"+safeError(initialized.error):"INITIALIZE_OK";renderDiag();
+if(initialized.error){fail("INITIALIZE_ERROR",initialized.error);return;}
+try{if(authorizationId)localStorage.setItem("gp9_oauth_pending",JSON.stringify({id:authorizationId,at:Date.now()}));}catch(e){fail("STORAGE_ERROR",e);return;}
+async function reconcile(){
+if(navigating)return;
+if(busy){rerun=true;return;}busy=true;
+try{
+const sessionResponse=await client.auth.getSession();
+diag.session=sessionResponse.error?"SESSION_ERROR:"+safeError(sessionResponse.error):sessionResponse.data.session?"SESSION_PRESENT":"SESSION_ABSENT";renderDiag();
+if(sessionResponse.error){fail("SESSION_ERROR",sessionResponse.error);return;}
+const userResponse=await client.auth.getUser();
 diag.user=userResponse.error?"USER_ERROR:"+safeError(userResponse.error):userResponse.data.user?"USER_PRESENT":"USER_ABSENT";renderDiag();
 const missingSession=!sessionResponse.data.session&&userResponse.error?.name==="AuthSessionMissingError";
-if(userResponse.error&&!missingSession){status.textContent="Không thể xác minh người dùng.";error.textContent=diag.user;return;}
-let authorizationId=current.searchParams.get("authorization_id");if(authorizationId&&!/^[a-zA-Z0-9_-]{8,160}$/.test(authorizationId)){fail(new Error("Yêu cầu chấp thuận không hợp lệ."));return;}if(authorizationId)localStorage.setItem("gp9_oauth_pending",JSON.stringify({id:authorizationId,at:Date.now()}));if(!authorizationId&&current.pathname===new URL(root).pathname){try{const pending=JSON.parse(localStorage.getItem("gp9_oauth_pending")||"null");if(pending&&Date.now()-pending.at<600000){location.replace(root+"oauth/consent/?authorization_id="+encodeURIComponent(pending.id));return;}}catch{}}
-if(!authorizationId){status.textContent=userResponse.data.user?"Đã đăng nhập. Chỉ kết nối từ ứng dụng được GP9 AI phê duyệt mới có thể yêu cầu chấp thuận.":"Sẵn sàng đăng nhập khi có yêu cầu OAuth hợp lệ.";return;}if(!userResponse.data.user){status.textContent="Đăng nhập để xem yêu cầu chấp thuận.";login.hidden=false;$("form").onsubmit=async ev=>{ev.preventDefault();error.textContent="";const button=$("form").querySelector("button");button.disabled=true;const {error:sendError}=await client.auth.signInWithOtp({email:$("email").value.trim(),options:{shouldCreateUser:false,emailRedirectTo:root}});button.disabled=false;if(sendError){fail(sendError);return;}status.textContent="Nếu tài khoản đã tồn tại, kiểm tra email để mở liên kết đăng nhập.";};return;}
-status.textContent="Đang tải thông tin yêu cầu…";const details=await client.auth.oauth.getAuthorizationDetails(authorizationId);if(details.error){fail(details.error);return;}if(details.data?.redirect_url){localStorage.removeItem("gp9_oauth_pending");location.assign(details.data.redirect_url);return;}if(!details.data?.authorization_id){fail(new Error("Không nhận được chi tiết yêu cầu chấp thuận."));return;}const data=details.data;status.textContent="Đã xác thực tài khoản.";consent.hidden=false;$("client").textContent="Ứng dụng yêu cầu: "+(data.client?.name||"Không xác định");$("scopes").textContent="Phạm vi: "+(Array.isArray(data.scope)?data.scope.join(", "):data.scope||"không rõ");async function decide(approve){error.textContent="";$("approve").disabled=$("deny").disabled=true;const result=approve?await client.auth.oauth.approveAuthorization(authorizationId):await client.auth.oauth.denyAuthorization(authorizationId);if(result.error){$("approve").disabled=$("deny").disabled=false;fail(result.error);return;}if(!result.data?.redirect_url){fail(new Error("Không nhận được URL trả về từ OAuth Server."));return;}localStorage.removeItem("gp9_oauth_pending");location.assign(result.data.redirect_url);}$("approve").onclick=()=>decide(true);$("deny").onclick=()=>decide(false);
-})().catch(e=>{document.getElementById("error").textContent=e?.message||"Lỗi xác thực.";});
+if(userResponse.error&&!missingSession){fail("USER_VALIDATION_ERROR",userResponse.error);return;}
+const authenticated=Boolean(sessionResponse.data.session&&userResponse.data.user);
+error.textContent="";login.hidden=consent.hidden=true;
+if(authenticated){
+if(storagePresence()!=="STORAGE_PRESENT"){fail("SESSION_PERSISTENCE_ERROR");return;}
+if(callbackDetected)diag.callback="CALLBACK_PROCESSED";
+if(!authorizationId&&current.pathname===new URL(root).pathname){
+let pending=null;try{pending=JSON.parse(localStorage.getItem("gp9_oauth_pending")||"null");}catch{}
+if(pending&&validId(pending.id)&&Number.isFinite(pending.at)&&Date.now()>=pending.at&&Date.now()-pending.at<600000)authorizationId=pending.id;
+}
+const clean=new URL(authorizationId?root+"oauth/consent/":root);
+if(authorizationId)clean.searchParams.set("authorization_id",authorizationId);
+history.replaceState(history.state,"",clean.pathname+clean.search);
+renderDiag();
+}
+if(!authorizationId){status.textContent=authenticated?"Đã đăng nhập. Chỉ kết nối từ ứng dụng được GP9 AI phê duyệt mới có thể yêu cầu chấp thuận.":"Sẵn sàng đăng nhập khi có yêu cầu OAuth hợp lệ.";return;}
+if(!authenticated){
+status.textContent="Đăng nhập để xem yêu cầu chấp thuận.";login.hidden=false;
+$("form").onsubmit=async ev=>{
+ev.preventDefault();error.textContent="";const button=$("form").querySelector("button");button.disabled=true;
+try{const {error:sendError}=await client.auth.signInWithOtp({email:$("email").value.trim(),options:{shouldCreateUser:false,emailRedirectTo:root}});
+if(sendError){error.textContent="LOGIN_REQUEST_ERROR:"+safeError(sendError);return;}
+status.textContent="Nếu tài khoản đã tồn tại, kiểm tra email để mở liên kết đăng nhập.";
+}catch(e){error.textContent="LOGIN_REQUEST_ERROR:"+safeError(e);}finally{button.disabled=false;}
+};return;
+}
+status.textContent="Đang tải thông tin yêu cầu…";
+const details=await client.auth.oauth.getAuthorizationDetails(authorizationId);
+if(details.error){fail("AUTHORIZATION_ERROR",details.error);return;}
+if(details.data?.redirect_url){localStorage.removeItem("gp9_oauth_pending");navigating=true;location.assign(details.data.redirect_url);return;}
+if(!details.data?.authorization_id){fail("AUTHORIZATION_DETAILS_MISSING");return;}
+const data=details.data;status.textContent="Đã xác thực tài khoản.";consent.hidden=false;
+$("client").textContent="Ứng dụng yêu cầu: "+(data.client?.name||"Không xác định");
+$("scopes").textContent="Phạm vi: "+(Array.isArray(data.scope)?data.scope.join(", "):data.scope||"không rõ");
+async function decide(approve){
+error.textContent="";$("approve").disabled=$("deny").disabled=true;
+try{const result=approve?await client.auth.oauth.approveAuthorization(authorizationId):await client.auth.oauth.denyAuthorization(authorizationId);
+if(result.error){error.textContent="AUTHORIZATION_ERROR:"+safeError(result.error);return;}
+if(!result.data?.redirect_url){fail("CALLBACK_URL_MISSING");return;}
+localStorage.removeItem("gp9_oauth_pending");navigating=true;location.assign(result.data.redirect_url);
+}catch(e){error.textContent="AUTHORIZATION_ERROR:"+safeError(e);}finally{if(!navigating)$("approve").disabled=$("deny").disabled=false;}
+}
+$("approve").onclick=()=>decide(true);$("deny").onclick=()=>decide(false);
+}catch(e){fail("AUTH_ERROR",e);}finally{busy=false;if(rerun&&!navigating){rerun=false;queueMicrotask(()=>{void reconcile();});}}
+}
+await reconcile();authReady=true;
+})().catch(()=>{document.getElementById("error").textContent="AUTH_RUNTIME_ERROR";});
 </script></body></html>
